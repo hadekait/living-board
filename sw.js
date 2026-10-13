@@ -1,5 +1,5 @@
-// 画面の部品だけを端末に控える。天気などの外部APIは毎回ネットから取る。
-const CACHE = 'living-board-v4';
+
+const CACHE = 'living-board-v5';
 const SHELL = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'room.webp'];
 
 self.addEventListener('install', (e) => {
@@ -15,7 +15,7 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (url.origin !== location.origin) return;
-  // 新しい版を優先し、通信できない時だけ控えを出す
+  
   e.respondWith(
     fetch(e.request)
       .then((r) => { const copy = r.clone(); caches.open(CACHE).then((c) => c.put(e.request, copy)); return r; })

@@ -19,20 +19,15 @@
   * { box-sizing:border-box; }
   html, body { margin:0; height:100%; background:#f3e6d3; color:var(--ink); overflow:hidden;
     font-family:"M PLUS Rounded 1c", "Noto Sans JP", sans-serif; -webkit-user-select:none; user-select:none; }
-  /* 絵と同じ16:10の舞台。どの画面でも全体が入るように縮める */
+  
   #stage { position:absolute; left:50%; top:50%; width:min(100vw, 160vh); height:min(62.5vw, 100vh);
     transform:translate(-50%,-50%); background:url(room.webp) center/100% 100% no-repeat; font-size:min(1vw, 1.6vh); }
 
-  /* ---- 顔(ロボットの画面に重ねる。座標は絵の1600×1000基準) ---- */
-  /* 絵(room.webp)の黒画面=(211,460)-(341,572)px。縁を少し残して内側に置く */
   #face { position:absolute; left:13.6%; top:46.8%; width:7.3%; height:9.8%; }
   #face svg { width:100%; height:100%; display:block; }
   .lid { transition:transform .12s; transform-origin:50% 60px; transform-box:view-box; }
   .blink .lid { transform:scaleY(.25); }
 
-  /* ---- 吹き出し ---- */
-  /* 舞台は幅100em×高さ62.5em。しっぽは左辺から器の画面(縦の中心=舞台の約52%)へ向ける。
-     吹き出しの上端(7%)から約28emの位置なので、短い日でもしっぽが外へ出ないよう最低の高さを32emにする */
   #bubble { position:absolute; left:25%; top:7%; width:43%; min-height:32em; padding:2.2em 2.6em 2em;
     background:var(--cream); border-radius:2.4em; box-shadow:0 .6em 1.8em rgba(120,80,40,.18); }
   #bubble::after { content:""; position:absolute; left:-2.9em; top:25.6em; border-top:1.5em solid transparent;
@@ -49,7 +44,6 @@
     padding:.2em .8em; border-radius:1em; background:var(--leaf-soft); }
   #hint[hidden] { display:none; }
 
-  /* ---- 予定の全部表示(吹き出しをタップで開き、どこかをタップで閉じる) ---- */
   #full { position:fixed; inset:0; background:rgba(255,250,241,.97); z-index:10; overflow:auto;
     padding:4vh 6vw; font-size:min(1vw, 1.6vh); }
   #full[hidden] { display:none; }
@@ -63,7 +57,6 @@
   #full .foot { margin-top:1.2em; font-size:2.2em; color:var(--accent); font-weight:700; }
   #full .close { margin-top:1.6em; font-size:1.8em; color:var(--dim); }
 
-  /* ---- ゴミ出しカレンダー(ゴミ出しのカードをタップで開き、どこかをタップで閉じる) ---- */
   #trashFull { position:fixed; inset:0; background:rgba(255,250,241,.98); z-index:10; padding:3vh 3vw;
     font-size:min(1vw, 1.6vh); display:flex; flex-direction:column; }
   #trashFull[hidden] { display:none; }
@@ -81,7 +74,6 @@
   .grid .day.past { opacity:.45; }
   #trashFull .legend { margin-top:.8em; font-size:1.7em; color:var(--dim); }
 
-  /* ---- 全画面表示の出入り: タップした所から「ぽわん」と開き、しゅっと閉じる ---- */
   .pop { animation:poof-in .42s cubic-bezier(.22,1.45,.42,1) both; }
   .pop.closing { animation:poof-out .22s ease-in both; }
   @keyframes poof-in {
@@ -94,7 +86,6 @@
     100% { opacity:0; transform:scale(.85); filter:blur(4px); }
   }
 
-  /* ---- 天気アイコン ---- */
   #wx .ico { width:4.6em; height:4.6em; flex:0 0 auto; align-self:center; }
   #plans .s { font-size:.62em; padding:.15em .7em; border-radius:1em; background:var(--leaf-soft); color:#5a7340; white-space:nowrap; }
   #plans .none { color:var(--dim); font-weight:500; }
@@ -102,9 +93,8 @@
   #home span { display:inline-block; margin-right:1.2em; }
   #outfit { margin-top:.7em; padding:.5em .9em; border-radius:1em; background:var(--leaf-soft); font-size:1.9em; font-weight:700; color:#55703a; }
   #outfit:empty { display:none; }
-  #outfit.evening { background:#d7ecf7; color:#3c6f8c; }  /* 夕方からの「宿題〜」は水色 */
+  #outfit.evening { background:#d7ecf7; color:#3c6f8c; }  
 
-  /* ---- 右の壁のカード ---- */
   #cards { position:absolute; right:3.5%; top:8%; width:24%; display:flex; flex-direction:column; gap:1.4em; }
   .card { background:var(--card); border-radius:1.8em; padding:1.3em 1.6em; box-shadow:0 .4em 1.2em rgba(120,80,40,.12); }
   #clock { font-size:6.4em; font-weight:800; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:.02em; }
@@ -117,7 +107,6 @@
   #trash { font-size:2.3em; font-weight:800; margin-top:.15em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #trash2 { font-size:1.6em; color:var(--dim); margin-top:.2em; line-height:1.4; }
 
-  /* ---- 隠し操作: 左上の角を長押しで設定 ---- */
   #corner { position:absolute; left:0; top:0; width:12vmin; height:12vmin; }
   #status { position:absolute; left:1.2%; bottom:1.2%; font-size:1.3em; color:rgba(74,59,44,.55); }
   dialog { border:0; border-radius:16px; background:var(--cream); color:var(--ink); font:inherit; font-size:18px;
@@ -140,17 +129,17 @@
   <div id="face">
     <svg viewBox="0 0 160 140" aria-hidden="true">
       <g stroke="#fff" stroke-width="6" stroke-linecap="round" fill="none">
-        <!-- 眉: ゆるい山なり(にっこり) -->
+        
         <path d="M30 30 Q44 22 58 30" /><path d="M102 30 Q116 22 130 30" />
       </g>
-      <!-- 目: スタックチャン標準の「●」 -->
+      
       <g id="eyes" class="lid" fill="#fff">
         <circle cx="44" cy="58" r="10" /><circle cx="116" cy="58" r="10" />
       </g>
-      <!-- 口: 休みは笑った口、話す時は● -->
+      
       <path id="mouthRest" d="M68 96 Q80 112 92 96" stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" />
       <circle id="mouthTalk" cx="80" cy="101" r="7" fill="#fff" style="display:none" />
-      <!-- 照れ -->
+      
       <g stroke="#f29bb0" stroke-width="4" stroke-linecap="round" opacity=".85">
         <path d="M24 82 L32 74" /><path d="M32 84 L40 76" /><path d="M120 84 L128 76" /><path d="M128 82 L136 74" />
       </g>
@@ -217,7 +206,6 @@ const store = {
   set(k, v) { localStorage.setItem('lb.' + k, JSON.stringify(v)); },
 };
 
-// ---- 初回設定の受け取り: URLの#setup=<base64のJSON> を一度だけ読んで保存し、アドレスから消す ----
 (function takeSetup() {
   const m = location.hash.match(/^#setup=(.+)$/);
   if (!m) return;
@@ -225,14 +213,13 @@ const store = {
     const cfg = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));
     if (cfg.feedUrl) store.set('feedUrl', cfg.feedUrl);
     if (cfg.feedTok) store.set('feedTok', cfg.feedTok);
-    // 習い事などのきまり(毎週)と、日付の決まった予定。受け取るたびに丸ごと置き換える
+    
     if (Array.isArray(cfg.rules)) store.set('rules', cfg.rules);
     if (Array.isArray(cfg.dated)) store.set('dated', cfg.dated);
-  } catch (e) { /* 壊れた設定は無視 */ }
+  } catch (e) {  }
   history.replaceState(null, '', location.pathname);
 })();
 
-// ---- 時計 ----
 function tick() {
   const d = new Date();
   $('clock').textContent = d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
@@ -242,7 +229,6 @@ function tick() {
 }
 tick(); setInterval(tick, 1000 * 20);
 
-// ---- 顔: まばたきと、話す口 ----
 function blink() { $('face').classList.add('blink'); setTimeout(() => $('face').classList.remove('blink'), 140); }
 setInterval(() => { if (Math.random() < .5) blink(); }, 3500);
 function talk(ms) {
@@ -251,7 +237,6 @@ function talk(ms) {
   setTimeout(() => { clearInterval(iv); dot.style.display = 'none'; rest.style.display = ''; }, ms);
 }
 
-// ---- 予定(中継スクリプトから。届かない時は前回の分を出す) ----
 function renderPlans(data, stale) {
   const ul = $('plans'); ul.innerHTML = '';
   const items = itemsOn(new Date(), data).filter((e) => !e.hidden);
@@ -259,7 +244,7 @@ function renderPlans(data, stale) {
   items.slice(0, 4).forEach((e) => ul.appendChild(itemRow(e)));
   if (items.length > 4) { const li = document.createElement('li'); li.innerHTML = `<span class="more">ほか ${items.length - 4} 件</span>`; ul.appendChild(li); }
   todayItems = items; todayDismissal = data.dismissal || [];
-  // 4件を超える・題名が「…」で切れている時だけ、全部表示の案内を出す
+  
   requestAnimationFrame(() => {
     const cut = items.length > 4 || [...ul.querySelectorAll('.n')].some((n) => n.scrollWidth > n.clientWidth + 1);
     $('hint').hidden = !cut;
@@ -274,12 +259,9 @@ function renderPlans(data, stale) {
 }
 let todayItems = [], todayDismissal = [];
 
-// ---- 端末の中の予定(公開ページには載らない。設定リンクか、左上の長押しで入れる) ----
-// rules = 毎週のきまり [{wd:0-6, time:'16:30', title, maxNth:4(その月の5回目以降は休み), skip:['YYYY-MM-DD'], from, until}]
-// dated = 日付の決まった予定(設定リンクで受け取る) / local = 長押しで足した予定。どちらも [{date:'YYYY-MM-DD', time, title}]
 const ymdOf = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 const normTime = (t) => (t || '').replace(/^0(\d)/, '$1');
-function timeKey(e) { const m = (e.time || '').match(/^(\d{1,2}):(\d{2})/); return m ? m[1] * 60 + +m[2] : -1; }  // いちにちの予定を先頭に
+function timeKey(e) { const m = (e.time || '').match(/^(\d{1,2}):(\d{2})/); return m ? m[1] * 60 + +m[2] : -1; }  
 function localItems(d) {
   const key = ymdOf(d), wd = d.getDay(), nth = Math.ceil(d.getDate() / 7), out = [];
   store.get('rules', []).forEach((r) => {
@@ -292,13 +274,10 @@ function localItems(d) {
   return out;
 }
 
-// ある日の予定を全部(カレンダー+端末の中)。かくした予定は hidden:true を付けて返す
-// かくす = この端末で出さないだけ。カレンダー側の予定は消さない。印は「日付|時刻|題名」で持つ
 const hideKey = (key, e) => `${key}|${e.time || ''}|${e.title}`;
 function itemsOn(d, data) {
   const t0 = new Date(d.getFullYear(), d.getMonth(), d.getDate()), t1 = new Date(t0.getTime() + 86400000), key = ymdOf(d);
-  // 終日の予定は時刻でなく日付で比べる。開始時刻はカレンダー側のタイムゾーンの0時なので、
-  // 12時間足してからUTCの日付を取ると、どのタイムゾーン(±12時間以内)でも予定の日付になる
+
   const dayOf = (iso) => new Date(new Date(iso).getTime() + 12 * 3600000).toISOString().slice(0, 10);
   const hidden = store.get('hidden', []);
   return ((data && data.events) || []).filter((e) => e.allDay
@@ -317,7 +296,7 @@ function itemRow(e) {
   if (e.cal === 'school') { const s = document.createElement('span'); s.className = 's'; s.textContent = '学校'; li.append(s); }
   return li;
 }
-// 全画面表示の開け閉め(タップした位置を起点に「ぽわん」)
+
 function openPop(el, ev) {
   el.style.transformOrigin = ev ? `${ev.clientX}px ${ev.clientY}px` : 'center';
   el.classList.remove('closing'); el.hidden = false;
@@ -326,13 +305,12 @@ function openPop(el, ev) {
 function closePop(el) {
   if (el.classList.contains('closing')) return;
   el.classList.add('closing');
-  // animationendが来ない環境(描画が止まっている時など)でも必ず閉じるよう、時間でも閉じる
+  
   const done = () => { if (!el.classList.contains('closing')) return; el.hidden = true; el.classList.remove('pop', 'closing'); };
   el.addEventListener('animationend', done, { once: true });
   setTimeout(done, 320);
 }
 
-// 吹き出しをタップ → 全部表示。全部表示のどこかをタップ → もどる
 $('bubble').addEventListener('click', (ev) => {
   if (!todayItems.length) return;
   const ul = $('fullList'); ul.innerHTML = '';
@@ -347,7 +325,7 @@ async function loadPlans() {
   const url = store.get('feedUrl', ''), tok = store.get('feedTok', '');
   if (!url || !tok) { renderPlans({ events: [] }, false); $('status').textContent = '予定の受け取り口が未設定です'; return; }
   try {
-    const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + encodeURIComponent(tok) + '&days=14');  // 設定画面で先の日の予定もかくせるよう2週間分(中継スクリプトの上限)
+    const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + encodeURIComponent(tok) + '&days=14');  
     const j = await r.json();
     if (!j.ok) throw new Error(j.error || 'ng');
     store.set('lastFeed', j);
@@ -361,7 +339,6 @@ async function loadPlans() {
 }
 loadPlans(); setInterval(loadPlans, 10 * 60 * 1000);
 
-// ---- 天気(Open-Meteo。地点は端末の中だけ) ----
 const WCODE = {0:'快晴',1:'晴れ',2:'晴れ時々くもり',3:'くもり',45:'きり',48:'きり',51:'きりさめ',53:'きりさめ',55:'きりさめ',
   61:'小雨',63:'雨',65:'大雨',71:'小雪',73:'雪',75:'大雪',80:'にわか雨',81:'にわか雨',82:'つよいにわか雨',95:'かみなり',96:'かみなり',99:'かみなり'};
 async function loadWeather() {
@@ -378,7 +355,6 @@ async function loadWeather() {
   } catch (e) { $('wxsub').textContent = '天気を読み込めませんでした'; }
 }
 
-// 天気アイコン(天気コードの種類ごとに図形で描く。外部の画像を使わない)
 function wxIcon(code) {
   const sun = '<circle cx="32" cy="32" r="11" fill="#f6b73c"/><g stroke="#f6b73c" stroke-width="4" stroke-linecap="round">' +
     [0,45,90,135,180,225,270,315].map((a) => { const r = a * Math.PI / 180;
@@ -395,12 +371,10 @@ function wxIcon(code) {
   else if (code === 45 || code === 48) body = cloud(2, 2, '#e3dccf') + fog;
   else if (code >= 71 && code <= 77) body = cloud(2, 6, '#d9d0c2') + snow;
   else if (code >= 95) body = cloud(2, 4, '#c9c0b2') + bolt;
-  else body = cloud(2, 6, '#d2cabc') + drops;  // 霧雨・雨・にわか雨
+  else body = cloud(2, 6, '#d2cabc') + drops;  
   return `<svg class="ico" viewBox="0 0 64 64" aria-hidden="true">${body}</svg>`;
 }
 
-// 吹き出しの一番下の1行: 朝〜昼は服装、夕方以降(16時〜翌朝5時)は宿題のひとこと
-// (時計の初回描画がこの行より先に走るため、ここだけvarで先に確保する)
 var outfitText = '';
 function renderOutfit(d) {
   const h = d.getHours(), evening = h >= 16 || h < 5;
@@ -408,7 +382,6 @@ function renderOutfit(d) {
   $('outfit').classList.toggle('evening', evening);
 }
 
-// 最高・最低気温からのおすすめ服装(一般的な気温の目安。日中は最高気温、朝晩は最低気温と寒暖差で足す)
 function outfit(hi, lo, rain) {
   let day;
   if (hi >= 28) day = '半そでで すずしく';
@@ -419,7 +392,7 @@ function outfit(hi, lo, rain) {
   else if (hi >= 9) day = 'コートを きていこう';
   else day = 'あつてのコート・マフラー・てぶくろ';
   const add = [];
-  if (/うわぎ|コート/.test(day)) { /* 日中の服に上着が入っていれば朝の分は足さない */ }
+  if (/うわぎ|コート/.test(day)) {  }
   else if (lo < 10 && hi >= 13) add.push('朝はさむいから うわぎを');
   else if (hi - lo >= 8 && hi >= 17) add.push('朝晩は はおりものを');
   if (rain != null && rain >= 50) add.push('かさを もっていこう');
@@ -427,9 +400,8 @@ function outfit(hi, lo, rain) {
 }
 loadWeather(); setInterval(loadWeather, 30 * 60 * 1000);
 
-// ---- ゴミ出し(曜日ごとの設定。端末の中だけ) ----
 function renderTrash(d) {
-  // 中継スクリプトにゴミ出しの決まりがあればそれを使い、無ければ端末の曜日設定を使う
+  
   const feed = store.get('lastFeed', null);
   const ymd = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   if (feed && feed.trash && feed.date === ymd) {
@@ -443,7 +415,6 @@ function renderTrash(d) {
   $('trash2').textContent = tomorrow ? `あしたは ${tomorrow}` : '';
 }
 
-// ---- ゴミ出しカレンダー(中継スクリプトの trashCal から今月・来月を描く) ----
 const TRASH_COLOR = [[/可燃/, '#f6b3aa'], [/缶/, '#d8bb93'], [/ガラス/, '#8fd3ef'], [/紙/, '#f7e07f'], [/金属|陶器/, '#b8da82'], [/ペット/, '#d3c0e6']];
 function trashColor(t) { const hit = TRASH_COLOR.find(([re]) => re.test(t)); return hit ? hit[1] : '#eee'; }
 function shortTrash(t) { return t.replace('飲料缶・スプレー缶', '缶・スプレー').replace('金属・陶器・リチウムイオン電池等', '金属・電池').replace('ペットボトル', 'ペット'); }
@@ -478,7 +449,6 @@ document.querySelectorAll('.card')[2].addEventListener('click', (ev) => {
 });
 $('trashFull').addEventListener('click', () => closePop($('trashFull')));
 
-// ---- 設定(左上の角を1.5秒長押し) ----
 let pressT = null;
 $('corner').addEventListener('pointerdown', () => { pressT = setTimeout(openDlg, 1500); });
 ['pointerup','pointerleave','pointercancel'].forEach((ev) => $('corner').addEventListener(ev, () => clearTimeout(pressT)));
@@ -493,8 +463,7 @@ function openDlg() {
   $('lcDate').value = ymdOf(new Date()); $('lcTime').value = ''; $('lcText').value = '';
   renderDay(); renderDiag(); $('dlg').showModal();
 }
-// 選んだ日の予定を全部並べる。端末で足した予定=削除 / それ以外(カレンダー・学校・習い事)=この端末でかくす・もどす
-// 昨日より前の分(足した予定・かくした印)は書き込む時に捨てる(増え続けないように)
+
 const keepFrom = () => ymdOf(new Date(Date.now() - 86400000));
 function renderDay() {
   const ul = $('localList'); ul.innerHTML = '';
@@ -520,7 +489,7 @@ function renderDay() {
     }
     li.append(d, x, b); ul.appendChild(li);
   });
-  // カレンダーの予定は2週間先までしか受け取っていない
+  
   const far = !feed || !feed.date || (day - new Date(feed.date + 'T00:00:00')) / 86400000 >= 14;
   if (!list.length) ul.innerHTML = '<li style="color:var(--dim)">この日の予定はありません</li>';
   if (far) { const li = document.createElement('li'); li.style.color = 'var(--dim)'; li.textContent = 'カレンダーの予定は2週間先までしか出ません'; ul.appendChild(li); }
@@ -546,7 +515,7 @@ $('placeGo').onclick = async () => {
   const find = (n) => fetch('https://geocoding-api.open-meteo.com/v1/search?count=8&language=ja&name=' + encodeURIComponent(n)).then((r) => r.json());
   try {
     let j = await find(q);
-    // 日本語は「札幌」で0件・「札幌市」で1件のように市区町村の接尾辞が要る(2026-10-12実測)
+    
     if (!(j.results || []).length && !/[市区町村]$/.test(q)) j = await find(q + '市');
     ul.innerHTML = '';
     (j.results || []).forEach((it) => {
@@ -559,7 +528,6 @@ $('placeGo').onclick = async () => {
   } catch (e) { ul.innerHTML = '<li>検索できませんでした</li>'; }
 };
 
-// ---- 全画面と画面維持(最初に触れた時に全画面へ) ----
 let lock = null, lockState = '未取得';
 async function keepAwake() {
   if (!('wakeLock' in navigator)) { lockState = '未対応'; return; }
@@ -574,13 +542,11 @@ document.addEventListener('pointerdown', (ev) => {
 });
 keepAwake();
 
-// ---- 焼き付き対策: 10分ごとに舞台を数px動かす ----
 setInterval(() => {
   const x = Math.round(Math.random()*10-5), y = Math.round(Math.random()*10-5);
   $('stage').style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
 }, 600000);
 
-// ---- Service Worker ----
 let swState = '未対応';
 if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').then(() => { swState = '登録済み'; }).catch((e) => { swState = '失敗: ' + e.name; });
 
