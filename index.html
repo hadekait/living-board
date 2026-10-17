@@ -107,7 +107,24 @@
   #trash { font-size:2.3em; font-weight:800; margin-top:.15em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #trash2 { font-size:1.6em; color:var(--dim); margin-top:.2em; line-height:1.4; }
 
-  #corner { position:absolute; left:0; top:0; width:12vmin; height:12vmin; }
+  #cv { position:absolute; left:calc(2% + .7em); top:calc(3% + .7em); width:6.1em; height:6.1em; padding:.4em; z-index:5;
+    touch-action:none; -webkit-tap-highlight-color:transparent; }
+  #cv .art { display:block; width:100%; height:100%; overflow:visible; transition:transform .15s;
+    filter:drop-shadow(0 .3em .5em rgba(80,60,30,.25)); }
+  #cv:active .art { transform:scale(.94); }
+  
+  #cv .leaf { fill:#8fb36a; stroke:#fff; stroke-width:3.5; paint-order:stroke;
+    transition:fill .18s, transform .18s; transform-box:view-box; transform-origin:50px 50px; }
+  #cv .leaf.on { fill:#5c8a37; transform:scale(1.06); }  
+  #cv .stem { stroke:#6e8f4b; stroke-width:4; stroke-linecap:round; fill:none; }
+  #cv .heart { fill:#fff; opacity:.9; }
+  #cv .tip { position:absolute; left:110%; top:50%; transform:translateY(-50%); white-space:nowrap; font-size:1.5em; font-weight:700;
+    color:#5a7340; background:var(--leaf-soft); padding:.25em .8em; border-radius:1em; opacity:0; transition:opacity .2s; pointer-events:none; }
+  #cv.showtip .tip { opacity:1; }
+  #cv.wiggle .art { animation:wiggle .5s ease; }
+  #cv.done .art { animation:spin .45s cubic-bezier(.3,1.4,.5,1); }
+  @keyframes wiggle { 0%,100% { transform:rotate(0); } 25% { transform:rotate(-12deg); } 75% { transform:rotate(10deg); } }
+  @keyframes spin { 0% { transform:rotate(0) scale(1); } 60% { transform:rotate(80deg) scale(1.15); } 100% { transform:rotate(90deg) scale(1); } }
   #status { position:absolute; left:1.2%; bottom:1.2%; font-size:1.3em; color:rgba(74,59,44,.55); }
   dialog { border:0; border-radius:16px; background:var(--cream); color:var(--ink); font:inherit; font-size:18px;
     width:min(760px, 92vw); max-height:88vh; overflow:auto; box-shadow:0 10px 40px rgba(0,0,0,.25); }
@@ -161,7 +178,13 @@
   </div>
 
   <div id="status"></div>
-  <div id="corner"></div>
+  <div id="cv" role="button" aria-label="せってい">
+    <svg class="art" viewBox="0 0 100 100" aria-hidden="true">
+      <path class="stem" d="M50 50 Q66 70 84 94" />
+      <g id="leaves"></g>
+    </svg>
+    <span class="tip">ながおしで せってい</span>
+  </div>
 </div>
 
 <div id="full" hidden>
@@ -449,9 +472,32 @@ document.querySelectorAll('.card')[2].addEventListener('click', (ev) => {
 });
 $('trashFull').addEventListener('click', () => closePop($('trashFull')));
 
-let pressT = null;
-$('corner').addEventListener('pointerdown', () => { pressT = setTimeout(openDlg, 1500); });
-['pointerup','pointerleave','pointercancel'].forEach((ev) => $('corner').addEventListener(ev, () => clearTimeout(pressT)));
+const LEAF = 'M50 50 C44 44 28 36 28 24 C28 14 38 10 44 14 C47 16 49 19 50 22 C51 19 53 16 56 14 C62 10 72 14 72 24 C72 36 56 44 50 50 Z';
+$('leaves').innerHTML = [-45, 45, 135, 225].map((a, i) =>
+  `<g transform="rotate(${a} 50 50)"><path class="leaf" d="${LEAF}"/>` +
+  (i === 0 ? '<path class="heart" transform="translate(50 30) scale(1.4) translate(-50 -30)" d="M50 34 C48 32 45 31 45 28.5 C45 26.8 46.6 26 47.8 26.6 C48.8 27.1 49.5 28 50 28.8 C50.5 28 51.2 27.1 52.2 26.6 C53.4 26 55 26.8 55 28.5 C55 31 52 32 50 34 Z"/>' : '') + '</g>').join('');
+const leaves = [...document.querySelectorAll('#cv .leaf')], HOLD = 1000;
+let pressT0 = 0, pressRaf = 0, tipT = 0;
+const setLeaves = (n) => leaves.forEach((l, i) => l.classList.toggle('on', i < n));
+const replay = (cls) => { $('cv').classList.remove(cls); void $('cv').offsetWidth; $('cv').classList.add(cls); };
+function growLeaves() {
+  const t = performance.now() - pressT0;
+  setLeaves(Math.min(4, Math.floor(t / (HOLD / 4)) + 1));
+  if (t < HOLD) { pressRaf = requestAnimationFrame(growLeaves); return; }
+  pressRaf = 0; replay('done');
+  setTimeout(() => { setLeaves(0); openDlg(); }, 380);  
+}
+$('cv').addEventListener('pointerdown', (ev) => {
+  ev.preventDefault(); cancelAnimationFrame(pressRaf);
+  pressT0 = performance.now(); pressRaf = requestAnimationFrame(growLeaves);
+});
+['pointerup','pointerleave','pointercancel'].forEach((ev) => $('cv').addEventListener(ev, () => {
+  if (!pressRaf) return;
+  
+  cancelAnimationFrame(pressRaf); pressRaf = 0; setLeaves(0);
+  replay('wiggle'); $('cv').classList.add('showtip');
+  clearTimeout(tipT); tipT = setTimeout(() => $('cv').classList.remove('showtip'), 2000);
+}));
 function openDlg() {
   $('feedUrl').value = store.get('feedUrl', ''); $('feedTok').value = store.get('feedTok', '');
   const t = store.get('trash', {}); const rows = $('trashRows'); rows.innerHTML = '';
