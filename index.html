@@ -40,7 +40,7 @@
   #plans .t { flex:0 0 4.2em; color:var(--leaf); font-variant-numeric:tabular-nums; }
   #plans .n { flex:1 1 auto; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   #plans .more { color:var(--dim); font-size:.8em; }
-  #hint { position:absolute; right:2.2em; top:1.6em; font-size:1.4em; color:var(--dim); font-weight:700;
+  #hint { position:absolute; right:3.6em; top:1.6em; font-size:1.4em; color:var(--dim); font-weight:700;
     padding:.2em .8em; border-radius:1em; background:var(--leaf-soft); }
   #hint[hidden] { display:none; }
 
@@ -56,6 +56,44 @@
   #full .s { font-size:.6em; padding:.15em .7em; border-radius:1em; background:var(--leaf-soft); color:#5a7340; white-space:nowrap; }
   #full .foot { margin-top:1.2em; font-size:2.2em; color:var(--accent); font-weight:700; }
   #full .close { margin-top:1.6em; font-size:1.8em; color:var(--dim); }
+
+  #weekBtn { position:absolute; right:-3.7em; top:-3em; padding:.6em; transform:rotate(10deg);
+    -webkit-tap-highlight-color:transparent; transition:transform .15s; }
+  #weekBtn:active { transform:rotate(10deg) scale(.93); }
+  #weekBtn svg { width:8em; height:6.25em; display:block; overflow:visible; filter:drop-shadow(0 .2em .35em rgba(120,80,40,.25)); }
+  
+  #weekBtn.hop svg { animation:hop .4s ease; }
+  @keyframes hop {
+    0%   { transform:none; }
+    30%  { transform:translateY(.3em) scale(1.1, .86); }
+    65%  { transform:translateY(-.9em) rotate(-8deg) scale(.95, 1.06); }
+    100% { transform:none; }
+  }
+  #week { position:fixed; inset:0; background:rgba(255,250,241,.98); z-index:10; padding:3vh 3vw;
+    font-size:min(1vw, 1.6vh); display:flex; flex-direction:column; }
+  #week[hidden] { display:none; }
+  #week h2 { margin:0 0 .5em; font-size:3.6em; font-weight:800; }
+  #weekGrid { display:grid; grid-template-columns:repeat(4, 1fr); grid-template-rows:repeat(2, minmax(0, 1fr)); gap:1.2em; flex:1 1 auto; min-height:0; }
+  .wday { background:#fff; border-radius:1.4em; padding:1em 1.2em; overflow:hidden; display:flex; flex-direction:column; min-height:0; }
+  .wday.today { outline:.35em solid var(--accent); }
+  .wday h3 { margin:0 0 .3em; font-size:2.4em; font-weight:800; display:flex; align-items:baseline; gap:.4em; }
+  .wday h3 .tag { font-size:.6em; padding:.1em .6em; border-radius:1em; background:var(--leaf-soft); color:#5a7340; }
+  .wday.sun h3 .d { color:#d0605a; } .wday.sat h3 .d { color:#5a7bc0; }
+  .wday ul { list-style:none; margin:0; padding:0; flex:1 1 auto; min-height:0; overflow:hidden; }
+  
+  .wday li { display:flex; gap:.4em; align-items:baseline; padding:.3em 0; border-top:1px dashed var(--line); font-size:1.7em; font-weight:700; }
+  .wday li:first-child { border-top:0; }
+  .wday .t { flex:0 0 4.2em; color:var(--leaf); font-variant-numeric:tabular-nums; font-size:.78em; white-space:nowrap; }
+  .wday .n { flex:1 1 auto; min-width:0; line-height:1.3; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; overflow:hidden; overflow-wrap:anywhere; }
+  .wday .s { font-size:.6em; padding:.1em .6em; border-radius:1em; background:var(--leaf-soft); color:#5a7340; white-space:nowrap; }
+  .wday .none, .wday .more { color:var(--dim); font-weight:500; }
+  
+  #week .wday, #week .wnote { animation:card-in .46s cubic-bezier(.22,1.5,.42,1) both; }
+  @keyframes card-in {
+    0%   { opacity:0; transform:translateY(1.6em) scale(.75) rotate(var(--tilt, -4deg)); }
+    100% { opacity:1; transform:none; }
+  }
+  .wnote { display:flex; flex-direction:column; justify-content:flex-end; gap:.6em; padding:1em .4em; font-size:1.7em; color:var(--dim); font-weight:700; }
 
   #trashFull { position:fixed; inset:0; background:rgba(255,250,241,.98); z-index:10; padding:3vh 3vw;
     font-size:min(1vw, 1.6vh); display:flex; flex-direction:column; }
@@ -165,6 +203,16 @@
 
   <div id="bubble">
     <div id="hint" hidden>タップで ぜんぶ見る</div>
+    <div id="weekBtn" role="button" aria-label="1しゅうかんの予定">
+      <svg viewBox="0 0 64 50" aria-hidden="true">
+        
+        <rect x="45" y="6" width="5" height="37" rx="2" fill="#fffaf1" />
+        <rect x="13" y="4" width="36" height="41" rx="5" fill="#a8a29a" />
+        <rect x="40" y="4" width="4" height="41" fill="#6f6a63" opacity=".6" />
+        <path d="M24 45 L24 49 L27 46.5 L30 49 L30 45 Z" fill="#7d9a5a" />
+        <g id="weekClover" transform="translate(13.5 11.5) scale(.26)"></g>
+      </svg>
+    </div>
     <div id="ask"><small id="askSub">きょう</small>今日の予定は？</div>
     <ul id="plans"><li><span class="none">予定を読み込んでいます…</span></li></ul>
     <div id="home"></div>
@@ -192,6 +240,11 @@
   <ul id="fullList"></ul>
   <div class="foot" id="fullFoot"></div>
   <div class="close">どこかをタップすると もどります</div>
+</div>
+
+<div id="week" hidden>
+  <h2>1しゅうかんの予定</h2>
+  <div id="weekGrid"></div>
 </div>
 
 <div id="trashFull" hidden>
@@ -343,6 +396,58 @@ $('bubble').addEventListener('click', (ev) => {
 });
 $('full').addEventListener('click', () => closePop($('full')));
 
+function fitDay(ul) {
+  let cut = 0;
+  const over = () => ul.scrollHeight > ul.clientHeight + 1;
+  while (over() && ul.children.length > 1) { ul.lastElementChild.remove(); cut++; }
+  if (!cut) return;
+  const li = document.createElement('li'); ul.appendChild(li);
+  const label = () => { li.innerHTML = `<span class="more">ほか ${cut} 件</span>`; };
+  label();
+  
+  while (over() && ul.children.length > 2) { li.previousElementSibling.remove(); cut++; label(); }
+}
+$('weekBtn').addEventListener('click', (ev) => {
+  ev.stopPropagation();  
+  const b = $('weekBtn'); b.classList.remove('hop'); void b.offsetWidth; b.classList.add('hop');
+  setTimeout(() => openWeek(ev), 260);  
+});
+function openWeek(ev) {
+  renderWeek(true);
+  openPop($('week'), ev);
+  
+  fitWeek(); setTimeout(fitWeek, 450);
+}
+
+function refitWeek() { if ($('week').hidden) return; renderWeek(false); fitWeek(); }
+window.addEventListener('resize', refitWeek);
+if (document.fonts) document.fonts.addEventListener('loadingdone', refitWeek);
+const fitWeek = () => { if (!$('week').hidden) $('weekGrid').querySelectorAll('.wday ul').forEach(fitDay); };
+function renderWeek(animate) {
+  const feed = store.get('lastFeed', null), now = new Date(), g = $('weekGrid'); g.innerHTML = '';
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i), wd = d.getDay();
+    const items = itemsOn(d, feed).filter((e) => !e.hidden);
+    const box = document.createElement('div');
+    box.className = 'wday' + (i === 0 ? ' today' : '') + (wd === 0 ? ' sun' : wd === 6 ? ' sat' : '');
+    const h = document.createElement('h3');
+    h.innerHTML = `<span class="d">${d.getMonth()+1}/${d.getDate()}(${WD[wd]})</span>` + (i < 2 ? `<span class="tag">${i ? 'あした' : 'きょう'}</span>` : '');
+    const ul = document.createElement('ul');
+    items.forEach((e) => ul.appendChild(itemRow(e)));
+    if (!items.length) ul.innerHTML = '<li><span class="none">予定なし</span></li>';
+    box.append(h, ul); g.appendChild(box);
+  }
+  const note = document.createElement('div'); note.className = 'wnote';
+  note.innerHTML = '<div>どこかをタップすると もどります</div>';
+  g.appendChild(note);
+  
+  [...g.children].forEach((c, i) => {
+    if (!animate) { c.style.animation = 'none'; return; }
+    c.style.animationDelay = `${120 + i * 70}ms`; c.style.setProperty('--tilt', i % 2 ? '4deg' : '-4deg');
+  });
+}
+$('week').addEventListener('click', () => closePop($('week')));
+
 let lastSig = '';
 async function loadPlans() {
   const url = store.get('feedUrl', ''), tok = store.get('feedTok', '');
@@ -476,6 +581,9 @@ const LEAF = 'M50 50 C44 44 28 36 28 24 C28 14 38 10 44 14 C47 16 49 19 50 22 C5
 $('leaves').innerHTML = [-45, 45, 135, 225].map((a, i) =>
   `<g transform="rotate(${a} 50 50)"><path class="leaf" d="${LEAF}"/>` +
   (i === 0 ? '<path class="heart" transform="translate(50 30) scale(1.4) translate(-50 -30)" d="M50 34 C48 32 45 31 45 28.5 C45 26.8 46.6 26 47.8 26.6 C48.8 27.1 49.5 28 50 28.8 C50.5 28 51.2 27.1 52.2 26.6 C53.4 26 55 26.8 55 28.5 C55 31 52 32 50 34 Z"/>' : '') + '</g>').join('');
+
+$('weekClover').innerHTML = [-45, 45, 135, 225].map((a) =>
+  `<path transform="rotate(${a} 50 50)" d="${LEAF}" fill="#fffaf1" stroke="#a8a29a" stroke-width="7" paint-order="stroke"/>`).join('');
 const leaves = [...document.querySelectorAll('#cv .leaf')], HOLD = 1000;
 let pressT0 = 0, pressRaf = 0, tipT = 0;
 const setLeaves = (n) => leaves.forEach((l, i) => l.classList.toggle('on', i < n));
