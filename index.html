@@ -271,7 +271,7 @@
 <div id="wxWeek" hidden>
   <h2>1しゅうかんの天気</h2>
   <div id="wxGrid"></div>
-  <div class="legend">しつど=その日の平均 ／ どこかをタップすると もどります</div>
+  <div class="legend">登校(7:30〜8:20)・下校(13:20〜16:00)=その時間に雨がふる確率 ／ しつど=その日の平均 ／ タップで もどる</div>
 </div>
 
 <div id="trashFull" hidden>
@@ -502,7 +502,7 @@ async function loadWeather() {
     
     const u = `https://api.open-meteo.com/v1/forecast?latitude=${p.lat}&longitude=${p.lon}` +
       '&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
-      '&hourly=relative_humidity_2m&timezone=Asia%2FTokyo&forecast_days=7';
+      '&hourly=relative_humidity_2m,precipitation_probability&timezone=Asia%2FTokyo&forecast_days=7';
     const j = await (await fetch(u)).json();
     $('wx').innerHTML = wxIcon(j.current.weather_code) +
       `<span class="now">${Math.round(j.current.temperature_2m)}°</span><span class="desc">${WCODE[j.current.weather_code] ?? ''}</span>`;
@@ -513,21 +513,27 @@ async function loadWeather() {
   } catch (e) { $('wxsub').textContent = '天気を読み込めませんでした'; }
 }
 
+const RAIN_GO = [7, 8, 9], RAIN_BACK = [13, 14, 15, 16];
 function wxDays() {
   const j = store.get('lastWx', null); if (!j || !j.daily || !j.daily.time) return [];
-  const today = ymdOf(new Date()), hum = {}, h = j.hourly || {};
+  const today = ymdOf(new Date()), hum = {}, go = {}, back = {}, h = j.hourly || {};
+  const add = (o, k, v) => { (o[k] = o[k] || []).push(v); };
   (h.time || []).forEach((t, i) => {
-    const v = (h.relative_humidity_2m || [])[i]; if (v == null) return;
-    const k = t.slice(0, 10); (hum[k] = hum[k] || []).push(v);
+    const k = t.slice(0, 10), hr = +t.slice(11, 13);
+    const v = (h.relative_humidity_2m || [])[i]; if (v != null) add(hum, k, v);
+    const r = (h.precipitation_probability || [])[i]; if (r == null) return;
+    if (RAIN_GO.includes(hr)) add(go, k, r);
+    if (RAIN_BACK.includes(hr)) add(back, k, r);
   });
   const avg = (a) => a && a.length ? Math.round(a.reduce((s, v) => s + v, 0) / a.length) : null;
+  const max = (a) => a && a.length ? Math.max(...a) : null;
   const dl = j.daily;
   return dl.time.map((k, i) => ({ k, code: (dl.weather_code || [])[i], hi: dl.temperature_2m_max[i], lo: dl.temperature_2m_min[i],
-    rain: (dl.precipitation_probability_max || [])[i], hum: avg(hum[k]) })).filter((d) => d.k >= today).slice(0, 7);
+    go: max(go[k]), back: max(back[k]), hum: avg(hum[k]) })).filter((d) => d.k >= today).slice(0, 7);
 }
 function renderWxWeek() {
   const g = $('wxGrid'); g.innerHTML = '';
-  const n = (v) => v == null ? '—' : Math.round(v);
+  const n = (v) => v == null ? '—' : Math.round(v), pct = (v) => v == null ? '—' : Math.round(v) + '%';
   wxDays().forEach((d, i) => {
     const [y, m, dd] = d.k.split('-').map(Number), wd = new Date(y, m - 1, dd).getDay();
     const box = document.createElement('div');
@@ -536,8 +542,9 @@ function renderWxWeek() {
       `<span class="d">${m}/${dd}(${WD[wd]})</span>` + (d.code == null ? '' : wxIcon(d.code)) +
       `<div class="desc">${(WCODE[d.code] ?? '').replace(/^(晴れ時々|つよい)/, '$1<wbr>')}</div>` +
       `<div class="hl"><span class="hi">${n(d.hi)}°</span><span class="lo">${n(d.lo)}°</span></div>` +
-      `<div class="v"><span class="k">雨</span>${n(d.rain)}%</div>` +
-      `<div class="v"><span class="k">しつど</span>${n(d.hum)}%</div>`;
+      `<div class="v"><span class="k">登校</span>${pct(d.go)}</div>` +
+      `<div class="v"><span class="k">下校</span>${pct(d.back)}</div>` +
+      `<div class="v"><span class="k">しつど</span>${pct(d.hum)}</div>`;
     
     box.style.animationDelay = `${120 + i * 70}ms`; box.style.setProperty('--tilt', i % 2 ? '4deg' : '-4deg');
     g.appendChild(box);

@@ -1,5 +1,5 @@
 
-const CACHE = 'living-board-v8';
+const CACHE = 'living-board-v9';
 const SHELL = ['./', 'index.html', 'manifest.json', 'icon-192.png', 'icon-512.png', 'room.webp'];
 
 self.addEventListener('install', (e) => {
